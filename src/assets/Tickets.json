@@ -1,0 +1,31 @@
+{
+    "tickets": [
+      {
+        "id": 1,
+        "issue_title": "Login not working",
+        "type": "Bug Report",
+        "date": "2023-09-25",
+        "description": "Users unable to log in to the application.",
+        "highPriority": true,
+        "status": "active"
+      },
+      {
+        "id": 2,
+        "issue_title": "Incorrect billing amount",
+        "type": "Billing Issue",
+        "date": "2023-09-24",
+        "description": "Users are being charged an incorrect amount.",
+        "highPriority": false,
+        "status": "closed"
+      },
+      {
+        "id": 3,
+        "issue_title": "Feature request: New Dashboard",
+        "type": "Bug Report",
+        "date": "2023-09-23",
+        "description": "Requesting a new, more interactive dashboard feature.",
+        "highPriority": true,
+        "status": "archived"
+      }
+    ]
+  }

@@ -1,17 +1,5 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Drawer from '@mui/material/Drawer';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import { Box, Button, Drawer, Toolbar, List, Typography, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { MoveToInbox as InboxIcon, Mail as MailIcon } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
@@ -61,7 +49,7 @@ export default function SideBar({ changePage }) {
                     <ListItemIcon>
                         <MailIcon />
                     </ListItemIcon>
-                    <ListItemText primary='Closed' />
+                    <ListItemText primary='High Priority' />
                 </ListItemButton>
             </ListItem>
 

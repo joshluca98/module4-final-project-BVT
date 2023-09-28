@@ -3,7 +3,7 @@
   background-color: black;
 }
 
-.centeredContainer {
+.trueCenteredContainer {
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -12,4 +12,28 @@
   margin-top: 100px;
   width: calc(100% - 255px);;
   height: calc(100vh - 135px);
+}
+
+.centeredContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  border: 7px solid black;
+  margin-top: 100px;
+  height: 85vh;
+  padding: 40px;
+}
+
+.ticketBorder {
+  border: 3px solid rgba(0, 0, 0, 0.31);
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 15px;
+  background-color: #eee;
+}
+
+li {
+  list-style-type: none;
+}
 }

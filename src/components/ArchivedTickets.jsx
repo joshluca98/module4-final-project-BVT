@@ -1,16 +1,16 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import ticketsData from '../assets/Tickets.json';
+import { Box, Typography, Container } from '@mui/material';
 
 export default function ActiveTickets () {
 
-    const { tickets } = ticketsData;
+    let tickets = [];
+    for (let i = 0; i < localStorage.length; i++){
+        const ticketLS = JSON.parse(localStorage.getItem(`Ticket ${i + 1}`))
+        tickets.push(ticketLS)
+    }
     
     return (
     <>  
-        <Typography variant="h3" gutterBottom>
+        <Typography variant="h4" gutterBottom>
                 Archived Tickets
         </Typography>
         <Container component="main" sx={{ width: 7/16, background: 'white', borderRadius: '20px'}}>
@@ -18,7 +18,6 @@ export default function ActiveTickets () {
                 sx={{
                 padding: '5%',
                 display: 'flex',
-                flexDirection: 'column',
                 height: '600px',
                 overflow: 'auto',
                 color: 'black'
@@ -26,16 +25,16 @@ export default function ActiveTickets () {
             >
                  <div>
                     <ul className='blackText'>
-                        { tickets.map(ticket => {
-                        if (ticket.status === "archived") {
+                        { tickets.map((ticket,index) => {
+                        if (ticket.status === "Archived") {
                             return (
-                                <li key={ticket.id}>
-                                    <h4>Ticket ID: {ticket.id}</h4>
-                                    <p><strong>Issue Title: </strong>{ticket.issue_title}</p>
+                                <li className='ticketBorder' key={ticket.id}>
+                                    <h4>Ticket ID: {index + 1}</h4>
+                                    <p><strong>Issue Title: </strong>{ticket.title}</p>
                                     <p><strong>Type: </strong>{ticket.type}</p>
                                     <p><strong>Date: </strong>{ticket.date}</p>
                                     <p><strong>Description: </strong>{ticket.description}</p>
-                                    <p><strong>Priority: </strong>{ticket.priority ? 'High' : 'Low'}</p>
+                                    <p><strong>Priority: </strong> {ticket.highPriority ? 'High' : 'Low'}</p>
                                     <p><strong>Status: </strong>{ticket.status}</p>
                                 </li>
                             );

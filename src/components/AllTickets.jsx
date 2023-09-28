@@ -1,16 +1,18 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import ticketsData from '../assets/Tickets.json';
 
 export default function AllTickets () {
 
-    const { tickets } = ticketsData;
-    
+    let ticketsArray = [];
+    for (let i = 0; i < localStorage.length; i++){
+        const ticketLS = JSON.parse(localStorage.getItem(`Ticket ${i + 1}`))
+        ticketsArray.push(ticketLS)
+    }
+
     return (
     <>  
-        <Typography variant="h3" gutterBottom>
+        <Typography variant="h4" gutterBottom>
                 All Tickets
         </Typography>
         <Container component="main" sx={{ width: 7/16, background: 'white', borderRadius: '20px'}}>
@@ -18,8 +20,6 @@ export default function AllTickets () {
                 sx={{
                 padding: '5%',
                 display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'start',
                 height: '600px',
                 overflow: 'auto',
                 color: 'black'
@@ -27,14 +27,14 @@ export default function AllTickets () {
             >
                 <div>
                     <ul className='blackText'>
-                        {tickets.map(ticket => (
-                        <li key={ticket.id}>
-                            <h4>Ticket ID: {ticket.id}</h4>
-                            <p><strong>Issue Title: </strong>{ticket.issue_title}</p>
+                        {ticketsArray.map((ticket,index) => (
+                        <li className='ticketBorder' key={ticket.id}>
+                            <h4>Ticket ID: {index + 1}</h4>
+                            <p><strong>Issue Title: </strong>{ticket.title}</p>
                             <p><strong>Type: </strong>{ticket.type}</p>
                             <p><strong>Date: </strong>{ticket.date}</p>
                             <p><strong>Description: </strong>{ticket.description}</p>
-                            <p><strong>Priority: </strong> {ticket.priority ? 'High' : 'Low'}</p>
+                            <p><strong>Priority: </strong> {ticket.highPriority ? 'High' : 'Low'}</p>
                             <p><strong>Status: </strong>{ticket.status}</p>
                         </li>
                         ))}

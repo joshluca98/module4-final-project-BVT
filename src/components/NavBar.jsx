@@ -1,39 +1,47 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
+import React from 'react';
+import { AppBar,Box,Toolbar,IconButton,Typography,Menu,Container,Avatar,Button,Tooltip,MenuItem} from '@mui/material';
 import BugReportIcon from '@mui/icons-material/BugReport';
-import UserIcon from '../assets/bvt-logo.png'
+import { useNavigate } from 'react-router-dom';
+import UserIcon from '../assets/bvt-logo.png';
 
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 
 const pages = [];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-export default function NavBar({ changePage }) {
+let settings;
+settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
+export default function NavBar({isLoggedIn, changePage, handleLogin}) {
+
+  const navigate = useNavigate();
+  
+  if (isLoggedIn){
+    settings = ['Logout'];
+  } else {
+    settings = ['Login']
+  }
+  
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
+  
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-  const handleCloseUserMenu = () => {
+
+  const handleCloseUserMenu = (event) => {
+    if(event.target.innerHTML === "Logout"){
+      handleLogin(false)
+      console.log(isLoggedIn);
+    }
+    if(event.target.innerHTML === "Login"){
+      navigate('/login');
+    }
+
     setAnchorElUser(null);
   };
+
   function handlePageClick(page) {
     changePage(page)
   }
@@ -61,7 +69,6 @@ export default function NavBar({ changePage }) {
               Virtual Help Desk
           </Typography>
             
-
           {/* USED FOR ADDING PAGES TO THE APPBAR */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
@@ -97,11 +104,13 @@ export default function NavBar({ changePage }) {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
+
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
+
             </Menu>
           </Box>
         </Toolbar>

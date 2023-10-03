@@ -15,7 +15,7 @@ import Login from './pages/Login.jsx';
 
 export default function App() {
 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
   const handleLogin = (data) => {
     setIsLoggedIn(data)

@@ -1,7 +1,9 @@
 import * as React from 'react';
+import {useEffect} from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { useNavigate } from 'react-router-dom';
 import NavBar from './components/NavBar.jsx'
 import GuestHomePage from './components/GuestHomePage.jsx'
 import UserHomePage from './components/UserHomePage.jsx'
@@ -12,10 +14,26 @@ import ArchivedTickets from './components/ArchivedTickets.jsx'
 import CreateTicket from './components/CreateTicket.jsx';
 import AllTickets from './components/AllTickets.jsx';
 import Login from './pages/Login.jsx';
+import LoggedOut from './pages/LoggedOut.jsx';
 
 export default function App() {
 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  
+  // const isLoggedIn = document.cookie.includes('logged_in');
+
+  const [isLoggedIn, setIsLoggedIn] = React.useState(document.cookie.includes('logged_in'));
+
+  const checkLoggedInStatus = () => {
+    setIsLoggedIn(document.cookie.includes('logged_in'));
+  };
+
+  useEffect(() => {
+    checkLoggedInStatus();
+    window.addEventListener('storage', checkLoggedInStatus);
+    return () => {
+      window.removeEventListener('storage', checkLoggedInStatus);
+    };
+  }, []);
 
   const handleLogin = (data) => {
     setIsLoggedIn(data)
@@ -61,8 +79,7 @@ export default function App() {
     }
 
     return (
-      <>
-          
+      <> 
           <div className={centerClass}>
             <BrowserRouter>
             <NavBar isLoggedIn={isLoggedIn} changePage={handlePageChange} handleLogin={handleLogin} />
@@ -73,8 +90,10 @@ export default function App() {
                       {mainContent}
                     </LocalizationProvider>} 
                   />
-                  <Route path="/login" element={!isLoggedIn ? <Login handleLogin={handleLogin} /> : <h1>You are already logged in.</h1>}/>
+                  <Route path="/login" element={<Login handleLogin={handleLogin} /> }/>
+                  <Route path="/loggedout" element={<LoggedOut /> }/>
                   <Route path="*" element={<h1>Error 404: Page not found.</h1>} />
+                  <Route path="/home" element={<GuestHomePage />} />
               </Routes>
             </BrowserRouter>
           </div>

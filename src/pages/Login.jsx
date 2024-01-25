@@ -1,18 +1,16 @@
-import * as React from 'react';
+import { useEffect, useState, React } from 'react';
 import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, Container } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from 'react-router-dom';
 
-
-
 export default function Login({handleLogin}) {
   
-  const [loginInfo, setLoginInfo] = React.useState({
+  const [loginInfo, setLoginInfo] = useState({
     email: null,
     password: null
   });
 
-  const [loginFail, setLoginFail] = React.useState(false)
+  const [loginFail, setLoginFail] = useState(false)
 
   const handleChange = (event) => {
     const name = event.target.name
@@ -20,25 +18,50 @@ export default function Login({handleLogin}) {
     setLoginInfo(prevInput => ({...prevInput, ...newInput}));
   };
 
-
-
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if(loginInfo.email === "josh@bvt.edu" && loginInfo.password) {
+    if(loginInfo.email && loginInfo.password) {
       handleLogin(true)
       navigate('/');
     } else {
       setLoginFail(true)
       setLoginInfo({ email: '', password: '' });
     }
-
   };
 
-  return (
+  async function fetchToken(){
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ loginInfo }),
+        credentials: "include"
+    }
+    const response = await fetch('http://localhost:5000/login', requestOptions)
+    const data = await response.json()
+    return data;
+}
 
-    
+const isLoggedIn = document.cookie.includes('logged_in');
+
+if (isLoggedIn) {
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      navigate('/');
+    }, 1500);
+  
+    return () => clearTimeout(timeoutId);
+  }, [navigate]);
+
+  return (<p> You are already logged in.</p>)
+
+  
+}
+
+
+return (
     
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -90,6 +113,7 @@ export default function Login({handleLogin}) {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={fetchToken}
             >
               Sign In
             </Button>

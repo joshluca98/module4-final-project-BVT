@@ -4,7 +4,6 @@ import BugReportIcon from '@mui/icons-material/BugReport';
 import { useNavigate } from 'react-router-dom';
 import UserIcon from '../assets/bvt-logo.png';
 
-
 const pages = [];
 
 let settings;
@@ -30,10 +29,26 @@ export default function NavBar({isLoggedIn, changePage, handleLogin}) {
     setAnchorElUser(event.currentTarget);
   };
 
+  async function clearCookie(){
+    const response = await fetch('http://localhost:5000/clearcookie', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (response.ok) {
+      console.log('Cookie deleted successfully.');
+    } else {
+      console.error('Failed to delete cookie.');
+    }
+
+    
+};
+
   const handleCloseUserMenu = (event) => {
     if(event.target.innerHTML === "Logout"){
-      handleLogin(false)
-      console.log(isLoggedIn);
+      clearCookie()
+      console.log('log out clicked');
+      navigate('/loggedout');
     }
     if(event.target.innerHTML === "Login"){
       navigate('/login');
@@ -50,12 +65,14 @@ export default function NavBar({isLoggedIn, changePage, handleLogin}) {
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, marginBottom: 20 }} >
       <Container maxWidth=''>
         <Toolbar disableGutters>
-          <BugReportIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, fontSize: 75}} />
+          <BugReportIcon className='bugReportIcon' sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, fontSize: 75}} 
+            onClick={() => navigate('/')} 
+          />
           <Typography
             variant="h5"
             component="a"
-            href="#"
-            onClick={() => handlePageClick('home')}
+            href=""
+            onClick={() => navigate('/')}
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -110,6 +127,11 @@ export default function NavBar({isLoggedIn, changePage, handleLogin}) {
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
+              
+              {/* <MenuItem key='login' onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center">Login</Typography>
+              </MenuItem> */}
+
 
             </Menu>
           </Box>

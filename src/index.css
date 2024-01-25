@@ -36,4 +36,7 @@
 li {
   list-style-type: none;
 }
+
+.bugReportIcon {
+  cursor: pointer
 }

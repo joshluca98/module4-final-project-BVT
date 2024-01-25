@@ -10,7 +10,7 @@ export default function ActiveTickets () {
     const [tickets, setTickets] = useState([]);
 
     async function fetchTickets(){
-        const response = await fetch('http://localhost:5000/opentickets')
+        const response = await fetch('http://localhost:5000/opentickets', { credentials: 'include', })
         const data = await response.json()
         setTickets(data)
     }
@@ -38,7 +38,7 @@ export default function ActiveTickets () {
                     <ul className='blackText'>
                         {tickets.map((ticket,index) => (
                         <li className='ticketBorder' key={ticket.id}>
-                            <h4>Ticket ID: {index + 1}</h4>
+                            <h4>Ticket ID: {ticket.ticket_id}</h4>
                             <p><strong>Issue Title: </strong>{ticket.issue_title}</p>
                             <p><strong>Type: </strong>{ticket.type}</p>
                             <p><strong>Date: </strong>{ticket.date}</p>

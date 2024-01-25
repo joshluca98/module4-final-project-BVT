@@ -43,6 +43,20 @@ app.use(cors(
 app.use(express.json())
 app.use(cookieParser());
 
+const authMiddleware = (req, res, next) => {
+  const token = req.cookies.logged_in;
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized - No token provided' });
+  }
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: 'Unauthorized - Invalid token' });
+    }
+    req.user = decoded;
+    next();
+  })
+};
+
 app.post('/login', (req, res) => {
   const { email, password } = req.body.loginInfo;
   console.log(email,password);
@@ -54,7 +68,7 @@ app.post('/login', (req, res) => {
   res.json({ email, password, token });
 });
 
-app.get('/alltickets', async function(req, res) {
+app.get('/alltickets', authMiddleware, async function(req, res) {
   try {
       const result = await req.db.query('SELECT * FROM support_tickets');
       const rows = result[0];
@@ -65,7 +79,7 @@ app.get('/alltickets', async function(req, res) {
   }
 });
 
-app.get('/opentickets', async function(req, res) {
+app.get('/opentickets', authMiddleware, async function(req, res) {
   try {
       const result = await req.db.query('SELECT * FROM support_tickets WHERE status = "Open"');
       const rows = result[0];
@@ -76,7 +90,18 @@ app.get('/opentickets', async function(req, res) {
   }
 });
 
-app.get('/closedtickets', async function(req, res) {
+app.get('/highprioritytickets', authMiddleware, async function(req, res) {
+  try {
+      const result = await req.db.query('SELECT * FROM support_tickets WHERE priority = "High"');
+      const rows = result[0];
+      res.json(rows);
+  } catch (err) {
+      console.log('Error fetching data from the database');
+      res.json({ success: false, message: 'Internal Server Error'});
+  }
+});
+
+app.get('/closedtickets', authMiddleware, async function(req, res) {
   try {
       const result = await req.db.query('SELECT * FROM support_tickets WHERE status = "Closed"');
       const rows = result[0];

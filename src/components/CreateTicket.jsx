@@ -4,14 +4,37 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 export default function CreateTicket() {
 
-    const writeToLocalStorage = (object) => {
-        const ticketKey = `Ticket ${localStorage.length+1}`
-        const ticketData = JSON.stringify(object);
-        localStorage.setItem(ticketKey, ticketData)
-    }
+    const [userInput, setUserInput] = React.useState({
+         issue_title: "",
+         type: "",
+         date: "",
+         description: "",
+         priority: "",
+         status: "Open"
+     });
+
+    async function createTicket(){
+        try {
+            const response = await fetch('http://localhost:5000/createticket', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({...userInput, status: "Open"}),
+            });
+            if (response.ok) {
+              console.log('Ticket created successfully', userInput);
+            } else {
+              console.error('Failed to create ticket');
+            }
+          } catch (error) {
+            console.error('Error creating ticket:', error);
+          }
+        };
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        writeToLocalStorage(userInput);
+        createTicket();
         setUserInput({
             title: "",
              type: "",
@@ -20,15 +43,6 @@ export default function CreateTicket() {
              highPriority: ""
          })
     };
-  
-    const [userInput, setUserInput] = React.useState({
-       title: "",
-        type: "",
-        date: "",
-        description: "",
-        highPriority: "",
-        status: "Active"
-    });
     
       const handleChange = (event) => {
         const name = event.target.name
@@ -41,10 +55,13 @@ export default function CreateTicket() {
         setUserInput(prevInput => ({...prevInput, ...newInput}));
       };
       const handleSwitchChange = (event) => {
-        const isHighPriority = event.target.checked;
-        console.log(isHighPriority);
-        const newInput = {highPriority: isHighPriority};
-        setUserInput(prevInput => ({...prevInput, ...newInput}));
+        let priority = '';
+        if(event.target.checked){
+            priority = "High";
+        } else {
+            priority = "Low";
+        }
+        setUserInput(prevInput => ({...prevInput, priority}));
       };
     
     return (
@@ -66,12 +83,12 @@ export default function CreateTicket() {
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>  
                     <TextField
                         margin="normal"
-                        id="title"
+                        id="issue_title"
                         label="Issue Title"
-                        name="title"
+                        name="issue_title"
                         autoFocus
                         onChange={handleChange}
-                        value={userInput.title}
+                        value={userInput.issue_title}
                     />
                     <Box sx={{ minWidth: 500, mt: 2, mb: 3 }}>
                         <FormControl fullWidth>
@@ -110,7 +127,7 @@ export default function CreateTicket() {
                     />
                     <FormControlLabel 
                         sx={{mt: 2, color: 'black'}} 
-                        control={<Switch name="highPriority" />} 
+                        control={<Switch name="priority" />} 
                         label="High Priority"
                         onChange={handleSwitchChange}
                     />

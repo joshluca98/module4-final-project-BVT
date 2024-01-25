@@ -124,7 +124,7 @@ app.post('/createticket', async function(req, res) {
       (:issue_title, :type, :date, :description, :priority, :status)`, {issue_title, type, date, description, priority, status});
       res.json({ success: true, message: 'Data successfully added'});
   } catch (err) {
-      console.log('Error inserting data into the database');
+      console.log('Error inserting data into the database', err);
       res.json({ success: false, message: err});
   }
 });

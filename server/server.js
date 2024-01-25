@@ -117,6 +117,42 @@ app.get('/clearcookie', function(req,res){
   res.send('You have been logged out.');
 });
 
+app.post('/createticket', async function(req, res) {
+  try {
+      const { issue_title, type, date, description, priority, status } = req.body;
+      const query = await req.db.query(`INSERT INTO support_tickets (issue_title, type, date, description, priority, status) VALUES
+      (:issue_title, :type, :date, :description, :priority, :status)`, {issue_title, type, date, description, priority, status});
+      res.json({ success: true, message: 'Data successfully added'});
+  } catch (err) {
+      console.log('Error inserting data into the database');
+      res.json({ success: false, message: err});
+  }
+});
+
+app.put('/updateticket/:id', async function(req, res) {
+  try {
+      const id = Number(req.params.id);
+      const { issue_title, type, date, description, priority, status } = req.body;
+      console.log(req.params.id, req.body);
+      const query = await req.db.query(`UPDATE support_tickets SET issue_title = :issue_title, type = :type, date = :date, description = :description, priority = :priority, status = :status WHERE ticket_id = :id`, {id, issue_title, type, date, description, priority, status});
+      res.json({ success: true, message: 'Data successfully updated'});
+  } catch (err) {
+      console.log('Error updating data in the database');
+      res.json({ success: false, message: err});
+  }
+});
+
+app.delete('/deleteticket/:id', authMiddleware, async function(req, res) {
+  try {
+      const id = Number(req.params.id);
+      const query = await req.db.query('UPDATE support_tickets SET status = "Closed" WHERE ticket_id = :id', {id});
+      res.json({ success: true, message: 'Car successfully deleted'});
+  } catch (err) {
+      console.log('Error deleting data from the database');
+      res.json({ success: false, message: 'Entry was NOT deleted'});
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${5000}`);
 });

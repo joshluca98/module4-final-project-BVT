@@ -2,18 +2,13 @@ import * as React from 'react';
 import { Button, TextField, FormControlLabel, Box, Typography, Container, Switch, InputLabel, MenuItem, FormControl, Select } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-
-
 export default function CreateTicket() {
-
-    
 
     const writeToLocalStorage = (object) => {
         const ticketKey = `Ticket ${localStorage.length+1}`
         const ticketData = JSON.stringify(object);
         localStorage.setItem(ticketKey, ticketData)
     }
-    
     const handleSubmit = (event) => {
         event.preventDefault();
         writeToLocalStorage(userInput);
@@ -53,7 +48,6 @@ export default function CreateTicket() {
       };
     
     return (
-
         <Container component="main" sx={{ width: 7/16, background: 'white', borderRadius: '20px'}}>
             <Box
                 sx={{

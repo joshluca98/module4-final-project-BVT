@@ -2,9 +2,36 @@ const express = require('express');
 const cors = require('cors')
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const mysql = require('mysql2/promise');
 const app = express();
-const PORT = 5000;
 const secretKey = 'password';
+
+const port = 5000;
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'module4-final-project',
+});
+
+app.use(async function(req, res, next) {
+  try {
+    req.db = await pool.getConnection();
+    req.db.connection.config.namedPlaceholders = true;
+
+    await req.db.query(`SET SESSION sql_mode = "TRADITIONAL"`);
+    await req.db.query(`SET time_zone = '-8:00'`);
+    console.log('DB Connection Made');
+    await next();
+    req.db.release();
+
+  } catch (err) {
+    console.log(err);
+
+    if (req.db) req.db.release();
+    throw err;
+  }
+});
 
 app.use(cors(
   {
@@ -15,7 +42,6 @@ app.use(cors(
 
 app.use(express.json())
 app.use(cookieParser());
-
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body.loginInfo;
@@ -28,28 +54,37 @@ app.post('/login', (req, res) => {
   res.json({ email, password, token });
 });
 
-// app.get('/login', (req, res) => {
-//   res.cookie('cookieName', 'cookieValue')
-//   res.send('cookie set');
-// });
+app.get('/alltickets', async function(req, res) {
+  try {
+      const result = await req.db.query('SELECT * FROM support_tickets');
+      const rows = result[0];
+      res.json(rows );
+  } catch (err) {
+      console.log('Error fetching data from the database');
+      res.json({ success: false, message: 'Internal Server Error'});
+  }
+});
 
-app.get('/protected', (req, res) => {
-  const authHeader = req.headers['authorization']
-  // const token = authHeader && authHeader.split(' ')[1]
+app.get('/opentickets', async function(req, res) {
+  try {
+      const result = await req.db.query('SELECT * FROM support_tickets WHERE status = "Open"');
+      const rows = result[0];
+      res.json(rows);
+  } catch (err) {
+      console.log('Error fetching data from the database');
+      res.json({ success: false, message: 'Internal Server Error'});
+  }
+});
 
-  const token = req.cookies.logged_in;
-  console.log(token);
-
-  if (token == null) return res.status(401).send('No token found. Failed to load page.')
-  jwt.verify(token, secretKey, (err, decoded) => {
-    if (err) return res.status(401).json({ message: 'Unauthorized - Invalid token' });
-    req.user = decoded
-
-    const responseText = 'Successfully loaded protected content! The decoded token value is: ';
-    const combinedResponse = responseText + JSON.stringify(decoded);
-
-    res.send(combinedResponse);
-  })
+app.get('/closedtickets', async function(req, res) {
+  try {
+      const result = await req.db.query('SELECT * FROM support_tickets WHERE status = "Closed"');
+      const rows = result[0];
+      res.json(rows );
+  } catch (err) {
+      console.log('Error fetching data from the database');
+      res.json({ success: false, message: 'Internal Server Error'});
+  }
 });
 
 app.get('/clearcookie', function(req,res){
@@ -57,6 +92,6 @@ app.get('/clearcookie', function(req,res){
   res.send('You have been logged out.');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${5000}`);
 });
